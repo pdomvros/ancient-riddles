@@ -111,7 +111,7 @@
         Your browser does not support the audio element.
     </audio>
     <audio id="successSound">
-        <source src="success-sound.mp3" type="audio/mpeg">
+        <source src="success-sound2.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
@@ -210,8 +210,8 @@
                 feedbackElement.classList.add("correct");
                 if (index === riddles.length - 1) { 
                     document.getElementById("winnerMessage").style.display = "block";
-                    const successSound2 = document.getElementById("successSound");
-                    successSound2.play(); // Παίζει τον ήχο επιτυχίας
+                    const successSound = document.getElementById("successSound");
+                    successSound.play(); // Παίζει τον ήχο επιτυχίας
                     disableAllTeams();
                 }
             } else {
