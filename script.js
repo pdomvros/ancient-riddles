@@ -1,32 +1,24 @@
-// Ορισμός των γρίφων
+// Ορισμός των γρίφων με πολλαπλής επιλογής
 const riddles = [
     {
         question: "Ποιος ήταν ο ηγέτης της Αθήνας κατά τη δεκαπενταετία 446-431 π.Χ.;",
+        options: ["Σωκράτης", "Περικλής", "Θεμιστοκλής", "Αριστοτέλης"],
         answer: "Περικλής"
     },
     {
         question: "Ποιο ήταν το κυρίαρχο σώμα στο αθηναϊκό πολίτευμα;",
+        options: ["Βουλή των Πεντακοσίων", "Εκκλησία του Δήμου", "Άρειος Πάγος", "Στρατηγοί"],
         answer: "Εκκλησία του Δήμου"
     },
     {
         question: "Ποιος ήταν ο σκοπός των Μεγάλων Παναθηναίων;",
-        answer: "Ψυχαγωγία των πολιτών και επίδειξη δύναμης και πλούτου της πόλης"
+        options: ["Επίδειξη πολιτικής δύναμης", "Ψυχαγωγία των πολιτών", "Εορτασμός της νίκης επί των Περσών", "Εμπόριο"],
+        answer: "Ψυχαγωγία των πολιτών"
     },
     {
         question: "Ποιος ήταν ο σκοπός της εκπαίδευσης στην αρχαία Αθήνα;",
+        options: ["Στρατιωτική εκπαίδευση", "Αρμονική καλλιέργεια σώματος και πνεύματος", "Θρησκευτική εκπαίδευση", "Εμπορική εκπαίδευση"],
         answer: "Αρμονική καλλιέργεια σώματος και πνεύματος"
-    },
-    {
-        question: "Ποιος ήταν ο ρόλος της Βουλής των Πεντακοσίων;",
-        answer: "Προετοίμαζε τα κείμενα των νόμων (προβούλευμα)"
-    },
-    {
-        question: "Ποια ήταν η βασική μονάδα του στρατού ξηράς στην αρχαία Αθήνα;",
-        answer: "Φάλαγγα"
-    },
-    {
-        question: "Ποιος ήταν ο ρόλος των μετοίκων στην Αθήνα;",
-        answer: "Ασχολούνταν με το εμπόριο και τη βιοτεχνία"
     }
 ];
 
@@ -36,6 +28,7 @@ const playerColors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1"];
 let currentRiddleIndex = 0;
 let activePlayers = [];
 let playerTimes = {};
+let selectedOptions = {};
 
 // Αρχικοποίηση του παιχνιδιού
 function initializeGame() {
@@ -47,6 +40,7 @@ function initializeGame() {
 
     activePlayers = Array.from({ length: numPlayers }, (_, i) => i + 1);
     playerTimes = activePlayers.reduce((acc, player) => ({ ...acc, [player]: 0 }), {});
+    selectedOptions = activePlayers.reduce((acc, player) => ({ ...acc, [player]: null }), {});
 
     displayPlayers();
     displayRiddle();
@@ -66,18 +60,34 @@ function displayPlayers() {
 function displayRiddle() {
     const riddle = riddles[currentRiddleIndex];
     document.getElementById("riddle-text").textContent = riddle.question;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = riddle.options.map((option, index) => `
+        <div class="option" data-index="${index}">${option}</div>
+    `).join("");
+
+    // Επιλογή απάντησης για κάθε παίκτη
+    document.querySelectorAll(".option").forEach(option => {
+        option.addEventListener("click", () => {
+            const player = activePlayers[0]; // Για απλότητα, επιλέγει ο πρώτος παίκτης
+            selectedOptions[player] = option.textContent;
+            option.style.backgroundColor = playerColors[player - 1];
+        });
+    });
 }
 
 // Έλεγχος της απάντησης
-function checkAnswer(answer) {
+function checkAnswer(player, answer) {
     const riddle = riddles[currentRiddleIndex];
-    return answer.trim().toLowerCase() === riddle.answer.toLowerCase();
+    return answer === riddle.answer;
 }
 
 // Υποβολή απάντησης
 document.getElementById("submit-answer").addEventListener("click", () => {
-    const answer = document.getElementById("answer-input").value;
-    if (checkAnswer(answer)) {
+    const player = activePlayers[0]; // Για απλότητα, υποβάλλει ο πρώτος παίκτης
+    const answer = selectedOptions[player];
+
+    if (checkAnswer(player, answer)) {
         alert("Σωστή απάντηση! 🎉");
         currentRiddleIndex++;
         if (currentRiddleIndex >= riddles.length) {
