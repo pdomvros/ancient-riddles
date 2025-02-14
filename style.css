@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
@@ -18,6 +18,12 @@ body {
 
 h1 {
     color: #d4af37;
+}
+
+.creator {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px;
 }
 
 #players {
@@ -41,12 +47,24 @@ h1 {
     margin-bottom: 10px;
 }
 
-#answer-input {
-    width: 80%;
+#options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.option {
+    margin: 5px;
     padding: 10px;
-    margin-bottom: 10px;
+    width: 80%;
+    background-color: #f9f9f9;
     border: 1px solid #ccc;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.option:hover {
+    background-color: #e0e0e0;
 }
 
 #submit-answer {
@@ -56,6 +74,7 @@ h1 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 #submit-answer:hover {
