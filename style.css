@@ -67,20 +67,6 @@ h1 {
     background-color: #e0e0e0;
 }
 
-#submit-answer {
-    padding: 10px 20px;
-    background-color: #d4af37;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-#submit-answer:hover {
-    background-color: #b5942e;
-}
-
 #result {
     margin-top: 20px;
     font-size: 1.2em;
