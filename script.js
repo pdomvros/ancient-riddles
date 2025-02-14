@@ -27,8 +27,8 @@ const playerColors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1"];
 
 let currentRiddleIndex = 0;
 let activePlayers = [];
-let playerTimes = {};
-let selectedOptions = {};
+let playerAnswers = {};
+let playerScores = {};
 
 // Αρχικοποίηση του παιχνιδιού
 function initializeGame() {
@@ -39,8 +39,8 @@ function initializeGame() {
     }
 
     activePlayers = Array.from({ length: numPlayers }, (_, i) => i + 1);
-    playerTimes = activePlayers.reduce((acc, player) => ({ ...acc, [player]: 0 }), {});
-    selectedOptions = activePlayers.reduce((acc, player) => ({ ...acc, [player]: null }), {});
+    playerAnswers = activePlayers.reduce((acc, player) => ({ ...acc, [player]: null }), {});
+    playerScores = activePlayers.reduce((acc, player) => ({ ...acc, [player]: 0 }), {});
 
     displayPlayers();
     displayRiddle();
@@ -51,7 +51,7 @@ function displayPlayers() {
     const playersDiv = document.getElementById("players");
     playersDiv.innerHTML = activePlayers.map(player => `
         <div class="player" style="background-color: ${playerColors[player - 1]}">
-            Παίκτης ${player}
+            Παίκτης ${player} (Σκορ: ${playerScores[player]})
         </div>
     `).join("");
 }
@@ -69,41 +69,39 @@ function displayRiddle() {
     // Επιλογή απάντησης για κάθε παίκτη
     document.querySelectorAll(".option").forEach(option => {
         option.addEventListener("click", () => {
-            const player = activePlayers[0]; // Για απλότητα, επιλέγει ο πρώτος παίκτης
-            selectedOptions[player] = option.textContent;
-            option.style.backgroundColor = playerColors[player - 1];
+            const selectedPlayer = prompt("Εισάγετε τον αριθμό του παίκτη (1-4):");
+            if (activePlayers.includes(Number(selectedPlayer))) {
+                playerAnswers[selectedPlayer] = option.textContent;
+                option.style.backgroundColor = playerColors[selectedPlayer - 1];
+                checkAnswers();
+            } else {
+                alert("Μη έγκυρος αριθμός παίκτη!");
+            }
         });
     });
 }
 
-// Έλεγχος της απάντησης
-function checkAnswer(player, answer) {
+// Έλεγχος των απαντήσεων
+function checkAnswers() {
     const riddle = riddles[currentRiddleIndex];
-    return answer === riddle.answer;
-}
-
-// Υποβολή απάντησης
-document.getElementById("submit-answer").addEventListener("click", () => {
-    const player = activePlayers[0]; // Για απλότητα, υποβάλλει ο πρώτος παίκτης
-    const answer = selectedOptions[player];
-
-    if (checkAnswer(player, answer)) {
-        alert("Σωστή απάντηση! 🎉");
-        currentRiddleIndex++;
-        if (currentRiddleIndex >= riddles.length) {
-            endGame();
-        } else {
-            displayRiddle();
+    activePlayers.forEach(player => {
+        if (playerAnswers[player] === riddle.answer) {
+            playerScores[player]++;
         }
+    });
+
+    // Εμφάνιση νέου γρίφου ή τέλος του παιχνιδιού
+    currentRiddleIndex++;
+    if (currentRiddleIndex >= riddles.length) {
+        endGame();
     } else {
-        alert("Λάθος απάντηση! 😞");
-        new Audio("sounds/fail-sound.mp3").play();
+        displayRiddle();
     }
-});
+}
 
 // Τέλος του παιχνιδιού
 function endGame() {
-    const winner = Object.keys(playerTimes).reduce((a, b) => playerTimes[a] < playerTimes[b] ? a : b);
+    const winner = Object.keys(playerScores).reduce((a, b) => playerScores[a] > playerScores[b] ? a : b);
     document.getElementById("result").innerHTML = `
         <p>Μπράβο! Παίκτης ${winner}, είσαι πραγματικά ταλαντούχος/α ερευνητής/τρια! 🎉🏆</p>
     `;
